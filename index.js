@@ -28,7 +28,7 @@ app.post("/dados", (req, res) => {
 //nos dados
 
 app.put("/dados", (req, res) => {
-  app.send("Você está no verbo PUT");
+  res.send("Você está no verbo PUT");
 });
 
 //DELETE
@@ -36,7 +36,7 @@ app.put("/dados", (req, res) => {
 //de dados
 
 app.delete("/dados", (req, res) => {
-  app.send("Você está no verbo DELETE");
+  res.send("Você está no verbo DELETE");
 });
 
 app.listen(3000);
