@@ -2,7 +2,7 @@
 //quando carregar módulos, faça associadoao a uma constante, para evitar a alteração de conteúdo e assim evitar
 //erros de execução.
 
-const express = require("espress");
+const express = require("express");
 
 const app = express();
 
