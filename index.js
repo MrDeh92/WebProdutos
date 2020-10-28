@@ -12,11 +12,50 @@ const bodyParser = require("body-parser");
 
 //Iniciaremos os exemplos de utilizção de verbos HTTP.
 
+var layout = [
+  {
+    header: "Lojão Brabo de Produtos",
+    navegacao: "listar,cadastrar,atualizar,deletar",
+    main: "página do corpo",
+    footer: "Av.João Paulo, 45, Vila Nova - São Paulo - SP",
+  },
+];
+
 //GET
 //Quando o meu usuario deseja obter algum dado do servidor.
 
-app.get("/dados", (req, res) => {
-  res.send("Você está no verbo GET");
+app.get("/listar", (req, res) => {
+  layout[0].main = [
+    {
+      nome: "Calça",
+      descrição: "Jeans Feminina",
+      preço: "R$ 150",
+      imagem:
+        "https://cea.vteximg.com.br/arquivos/ids/10817625/Calca-Jeans-Feminina-Sawary-Super-Skinny-com-Rasgos-Azul-Escuro-9619276-Azul_Escuro_1.jpg?v=637085005993530000",
+    },
+    {
+      nome: "Blusa",
+      descrição: "Ace One Piece -Preta",
+      preço: "R$ 50",
+      imagem:
+        "https://i3.wp.com/ae01.alicdn.com/kf/HTB1.t1zbUGF3KVjSZFoq6zmpFXaU/Camisa-da-forma-T-100-Algod%C3%A3o-PULAR-50th-One-Piece-Ace-obrigado-por-me-amar-Jap%C3%A3o.jpg",
+    },
+    {
+      nome: "Tênis",
+      descrição: "Nike",
+      preço: "R$ 500",
+      imagem:
+        "https://cdn.iset.io/assets/50315/produtos/4133/tenis-nike-sb-chron-slr-preto-cd6278-002.jpg",
+    },
+    {
+      nome: "Jaqueta",
+      descrição: "Couro - Marrom",
+      preço: "R$ 350",
+      imagem:
+        "https://cdn.awsli.com.br/800x800/4/4061/produto/18847911/e8476d14c1.jpg",
+    },
+  ];
+  res.send(layout);
 });
 
 //POST
