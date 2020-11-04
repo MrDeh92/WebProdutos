@@ -10,6 +10,23 @@ const app = express();
 //realiza a sua conversão para json. assim podemos manipular os dados
 const bodyParser = require("body-parser");
 
+//para ler o arquivo de JSOn que contem os produtos que desejo exibir
+// nós iremos carregar o módulo do fs(file System)
+const fs = require("fs");
+
+// Vamos criar uma váriavel no formatode array
+// que irá guardar os produtos no arquivo loja
+var dadosprodutos = null;
+
+//realizar a leitura do arquivo texto
+//primeira parte é o nome do arquivo
+//segunda parte é o enconding(tipo de texto-com acento)
+//terceira parte é a função de callback
+fs.readFile("./loja.json", "utf-8", function (err, texto) {
+  if (err) throw err;
+  dadosprodutos = JSON.parse(texto);
+});
+
 //Iniciaremos os exemplos de utilizção de verbos HTTP.
 
 var layout = [
@@ -25,36 +42,7 @@ var layout = [
 //Quando o meu usuario deseja obter algum dado do servidor.
 
 app.get("/listar", (req, res) => {
-  layout[0].main = [
-    {
-      nome: "Calça",
-      descrição: "Jeans Feminina",
-      preço: "R$ 150",
-      imagem:
-        "https://cea.vteximg.com.br/arquivos/ids/10817625/Calca-Jeans-Feminina-Sawary-Super-Skinny-com-Rasgos-Azul-Escuro-9619276-Azul_Escuro_1.jpg?v=637085005993530000",
-    },
-    {
-      nome: "Blusa",
-      descrição: "Ace One Piece -Preta",
-      preço: "R$ 50",
-      imagem:
-        "https://i3.wp.com/ae01.alicdn.com/kf/HTB1.t1zbUGF3KVjSZFoq6zmpFXaU/Camisa-da-forma-T-100-Algod%C3%A3o-PULAR-50th-One-Piece-Ace-obrigado-por-me-amar-Jap%C3%A3o.jpg",
-    },
-    {
-      nome: "Tênis",
-      descrição: "Nike",
-      preço: "R$ 500",
-      imagem:
-        "https://cdn.iset.io/assets/50315/produtos/4133/tenis-nike-sb-chron-slr-preto-cd6278-002.jpg",
-    },
-    {
-      nome: "Jaqueta",
-      descrição: "Couro - Marrom",
-      preço: "R$ 350",
-      imagem:
-        "https://cdn.awsli.com.br/800x800/4/4061/produto/18847911/e8476d14c1.jpg",
-    },
-  ];
+  layout[0].main = dadosprodutos.produtos;
   res.send(layout);
 });
 
@@ -63,24 +51,65 @@ app.get("/listar", (req, res) => {
 //com o intuito de cadastrar ou realizar autenticação
 //vamos usar o body-parser
 app.use(bodyParser.json());
-app.post("/dados", (req, res) => {
-  res.send(req.body);
+
+app.post("/cadastrar", (req, res) => {
+  dadosprodutos.produtos.push(req.body);
+
+  fs.writeFile("./loja.json", JSON.stringify(dadosprodutos), "utf-8", function (
+    err
+  ) {
+    if (err) throw err;
+    res.send("Dados Cadastrados");
+  });
 });
 
 //PUT
 //Utilizado quando o usuário deseja realizar uma atualização
 //nos dados
 
-app.put("/dados", (req, res) => {
-  res.send("Você está no verbo PUT");
+app.put("/atualizar", (req, res) => {
+  var idenviado = req.body.idproduto;
+
+  //pegar a quantidade de produtos dentro do arquivo jsonv
+  var qtd = dadosprodutos.produtos.length;
+
+  for (var i = 0; i < qtd; i++) {
+    if (idenviado == dadosprodutos.produtos[i].idprodutos) {
+      dadosprodutos.produtos[i].nome = req.body.nome;
+      dadosprodutos.produtos[i].descricao = req.body.descricao;
+      dadosprodutos.produtos[i].preco = req.body.preco;
+      dadosprodutos.produtos[i].imagem = req.body.imagem;
+      break;
+    }
+  }
+
+  fs.writeFile("./loja.json", JSON.stringify(dadosprodutos), "utf-8", function (
+    err
+  ) {
+    if (err) throw err;
+    res.send("Dados atualizados com sucesso!");
+  });
 });
 
 //DELETE
 //Utilizado quando o usuário deseja apagar algo no banco
 //de dados
 
-app.delete("/dados", (req, res) => {
-  res.send("Você está no verbo DELETE");
+app.delete("/apagar", (req, res) => {
+  var idenviado = req.body.idproduto;
+  var qtd = dadosprodutos.produtos.length;
+  for (var i = 0; i < qtd; i++) {
+    if (idenviado == dadosprodutos.produtos[i].idprodutos) {
+      dadosprodutos.produtos.splice(i, 1);
+      break;
+    }
+  }
+  fs.writeFile("./loja.json", JSON.stringify(dadosprodutos), "utf-8", function (
+    err
+  ) {
+    if (err) throw err;
+    res.send("Podruto apagado.");
+  });
 });
 
 app.listen(3000);
